@@ -9,7 +9,7 @@ model sugarscape1
 global {
 	int vision <- 6;
 	int nb_initial_ant <- 1;
-	float metabolism <- 5.0;
+	float metabolism <- 10.0;
 	float max_energy <- 25.0;
 	int nb_ant -> {length(ant)};
 	float average_vision <- 6.0 update: calculate_average_vision();
