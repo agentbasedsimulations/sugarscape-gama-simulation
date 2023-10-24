@@ -8,9 +8,9 @@ model sugarscape1
 
 global {
 	int vision <- 6;
-	int nb_initial_ant <- 1;
-	float metabolism <- 10.0;
-	float max_energy <- 25.0;
+	int nb_initial_ant <- 400;
+	int metabolism <-4;
+	int max_energy <- 25;
 	int nb_ant -> {length(ant)};
 	float average_vision <- 6.0 update: calculate_average_vision();
 	float average_metabolism <- 5.0 update: calculate_average_metabolism();
@@ -51,27 +51,27 @@ species ant {
 //cell espaco;
 	int vision_ant min: 1 <- rnd(vision);
 	cell my_cell <- one_of(cell);
-	float matabolism_ant <- rnd(metabolism);
-	float inicial_energy min: 5.0 <- rnd(max_energy);
-	float energy min: 0.0 <- inicial_energy update: energy - matabolism_ant max: max_energy;
+	int matabolism_ant min: 1<- rnd(metabolism);
+	int inicial_energy min: 5<- rnd(max_energy);
+	int energy min: 0 <- inicial_energy update: energy - matabolism_ant + my_cell.sugar max: max_energy;
 
 	init {
 		location <- my_cell.location;
+		my_cell <- choose_cell();
 	}
 
-	reflex basic_move {
-		energy <- energy + my_cell.sugar;
-		my_cell <- choose_cell();
-		location <- my_cell.location;
-	}
+//	reflex basic_move {
+//		location <- my_cell.location;
+//		
+//	}
 
 	cell choose_cell {
 		list<cell> available_cells <- my_cell.neighbours[vision_ant] where (empty(ant inside (each)));
 		cell cell_with_max_sugar <- available_cells with_max_of (each.sugar);
-		if (cell_with_max_sugar.sugar > my_cell.sugar) {
-			return cell_with_max_sugar;
-		} else {
+		if (cell_with_max_sugar.sugar < my_cell.sugar or cell_with_max_sugar.sugar = my_cell.sugar) {
 			return my_cell;
+		} else {
+			return cell_with_max_sugar;
 		}
 
 	}
@@ -90,9 +90,10 @@ species ant {
 grid cell width: 50 height: 50 neighbors: 4 {
 	float max_sugar;
 	float sugarGrowthRate <- 0.0;
-	float sugar update: sugar + sugarGrowthRate max: max_sugar;
+	float sugar ;
 	map<int, list<cell>> neighbours;
 	//list<cell> neighbours2 <- (self neighbors_at vision_ant );
+	
 	reflex updateColor {
 		if (sugar = 1) {
 			color <- rgb(250, 250, 210);
