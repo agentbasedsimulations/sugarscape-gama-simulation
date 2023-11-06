@@ -1,2 +1,2 @@
 # sugarscape-gama-simulation
-GAMA implementation of the Sugarscape model
+GAMA implementation of the Sugarscape oi.
