@@ -1,5 +1,5 @@
 
- ![Logo da UDESC Alto Vale](C:\Users\46759122810\Documents\GitHub\Imagens\novahorizontalassinatura\Horizontal Assinatura\Marca Alto Vale Horizontal Assinatura CMYK-01.jpg)
+<img src= "Imagens/novahorizontalassinatura/Horizontal Assinatura/Marca Alto Vale Horizontal Assinatura CMYK-01.jpg">
 # Simulação Sugar Scape
 O objetivo dessa [simulação com agentes](https://sites.google.com/view/simulacoescomagentes/) é estudar a linguagem gama e algumas das suas diversas aplicações. A simulação a seguir considera o exercício SugarScape, desenvolvido por Joshua M. Epstein e Robert Axell em 1996, citado no capítulo 2 do livro "Growing Artificial Societies: Social Science from the Bottom Up". Nessa simulação é criado um **agente artificial** (virtual) para cada formiga. Esses agentes são dotados de habilidades, como: visão (vision), energia (sugar), metabolismo (metabolismo). Além disso, as formigas são capazes de se movimentar por um mapa que possui quantidades determinadas de açúcar; assim que a formiga interage com a região de açúcar, comendo-o, há o crescimento imediato deste.
 
