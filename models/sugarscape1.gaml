@@ -16,6 +16,9 @@ global {
 	int nb_ant -> {length(ant)};
 	float average_vision <- 6.0 update: calculate_average_vision();
 	float average_metabolism <- 5.0 update: calculate_average_metabolism();
+	int minDeathAge <- 60;
+	int maxDeathAge <- 100;
+	bool replace <- true;
 	
 	float calculate_average_vision {
     float totalVision <- 0.0;
@@ -58,6 +61,8 @@ species ant{
 	int matabolism_ant min: 1<- rnd(metabolism);
 	int inicial_energy min: 5<- rnd(max_sugar);
 	float sugar min: 0 <- inicial_energy update: sugar - matabolism_ant + my_cell.pSugar;
+	int maxAge  min: minDeathAge max: maxDeathAge <- rnd (maxDeathAge - minDeathAge) + minDeathAge;
+	int age max: maxAge <- 0 update: int(age + 1);
 	
 	init{
 		location <- choose_cell().location;
@@ -82,10 +87,13 @@ species ant{
 	
 	aspect default {
 		draw circle(1.0) color: #darkred;
-		//draw string (sugar with_precision 1 ) size: 3 color: #black;
+		draw string (sugar with_precision 1 ) size: 3 color: #black;
 	}
 	
-	reflex end_of_life when: (sugar <= 0)  {
+	reflex end_of_life when: (sugar <= 0) or (age = maxAge)  {
+		if replace {
+			create ant ;
+		}
 		do die;
 	}
 	
@@ -134,6 +142,7 @@ grid cell width: 50 height: 50 neighbors:4{
 experiment simulation type: gui {
 	parameter "Visão: " var: vision min: 1 max: 25 category: "Ant";
 	parameter "Quantida formiga: " var: nb_initial_ant min: 1 max: 2500 category: "Ant";
+	parameter 'Replace dead agents ?' var: replace <- true category: 'Agents';
 	output{ 
 		display display_grid {
            grid cell;
@@ -142,8 +151,8 @@ experiment simulation type: gui {
 	}
 	display "my_display"  {
         chart "my_chart" type: histogram {
-        datalist (distribution_of(ant collect each.sugar,20, ant min_of each.sugar,ant max_of each.sugar) at "legend") 
-            value:(distribution_of(ant collect each.sugar,10,0,200) at "values");      
+        datalist (distribution_of(ant collect each.sugar, 30, ant min_of each.sugar,ant max_of each.sugar) at "legend") 
+            value:(distribution_of(ant collect each.sugar,20,0,200) at "values");      
         }
     }
 	display Population refresh: every(5#cycles)  type: 2d {
