@@ -2,41 +2,53 @@
 <img src= "Imagens/Marca Alto Vale Horizontal Assinatura CMYK-01.jpg">
 
 ---
- 
- # Simulação Sugar Scape
-O objetivo dessa [simulação com agentes](https://sites.google.com/view/simulacoescomagentes/) é estudar a linguagem gama e algumas das suas diversas aplicações. A simulação a seguir considera o exercício SugarScape, desenvolvido por Joshua M. Epstein e Robert Axell em 1996, citado no capítulo 2 do livro "Growing Artificial Societies: Social Science from the Bottom Up". Nessa simulação é criado um **agente artificial** (virtual) para cada formiga. Esses agentes são dotados de habilidades, como: visão (vision), energia (sugar), metabolismo (metabolismo). Além disso, as formigas são capazes de se movimentar por um mapa que possui quantidades determinadas de açúcar; assim que a formiga interage com a região de açúcar, comendo-o, há o crescimento imediato deste.
+ //todo GAMA em maiusculo em todas as ocorrencias
 
-A simulação foi desenvolvida no âmbito do projeto de pesquisa [Simulação baseada em agentes](https://www.udesc.br/ceavi/pesquisaepos/pesquisa/projetos)
+ # Tutorial: Simulação SugarScape na Plataforma GAMA
+O objetivo deste tutorial de [simulação com agentes](https://sites.google.com/view/simulacoescomagentes/) é estudar a linguagem GAMA e algumas das suas diversas aplicações. A simulação a seguir considera o modelo SugarScape, desenvolvido por Joshua M. Epstein e Robert Axell em 1996, citado no capítulo 2 do livro "Growing Artificial Societies: Social Science from the Bottom Up". Esse modelo considera uma população de formigas, que se movimentam pelo ambiente em busca de alimento (açúcar) para se manterem vivas. O alimento pode reaparecer com o passar do tempo.
+
+Na simulação é criado um **agente artificial** (virtual) para cada formiga. Esses agentes são dotados de habilidades, como: visão (_vision_), energia (_sugar_), metabolismo (_metabolism_). Além disso, as formigas são capazes de se movimentar por um mapa. O mapa possui quantidades determinadas de açúcar; assim que a formiga interage com a região de açúcar, comendo-o, há o crescimento imediato deste. //todo explicar que o crescimento nem sempre é imediado; depende do cenário em estudo.
+
+A simulação foi desenvolvida no âmbito do projeto de pesquisa [Simulações baseadas em agentes](https://www.udesc.br/ceavi/pesquisaepos/pesquisa/projetos)
 do [Centro de Educação superior do Alto Vale do Itajaí (CEAVI/UDESC)](https://www.udesc.br/ceavi). Os autores da simulação são:
 
 - [Aline Rodrigues Santos](mailto:46759122810@edu.udesc.com) (Aluna de Engenharia de Software e bolsista de pesquisa).
-- [Fernando dos Santos](mailto:fernando.santos@udesc.br) (Professor no curso de Engenharia de Sofware).
+- [Fernando dos Santos](mailto:fernando.santos@udesc.br) (Professor no curso de Engenharia de Software).
 
-A simulação apresentada foi uma representação da simulação [SugarScape](https://ccl.northwestern.edu/netlogo/models/Sugarscape1ImmediateGrowback) encontrada na plataforma [NetLogo](https://ccl.northwestern.edu/netlogo/). Adaptada para a plataforma [GAMA](https://gama-platform.org/).
+A simulação explicada é uma adaptação para a plataforma [GAMA](https://gama-platform.org/) da simulação [SugarScape](https://ccl.northwestern.edu/netlogo/models/Sugarscape1ImmediateGrowback) disponível na plataforma [NetLogo](https://ccl.northwestern.edu/netlogo/). Este tutorial
 
 # Sumário
 * [Especificação da Simulação](#especificação-da-simulação)
   * [Mapa](#mapa)
-  * [Açucar](#açúcar)
+  * [Açucar](#açúcar) //todo revisar acentuações
   * [Formigas](#formigas)
-* [Explicação do Código](#código)
+* [Implementação da Simulação](#código)
   * [Grid](#grid)
   * [Experiment](#experiment)
+* Versões implementadas
+  * Sugarscape1.gaml: explicar
+  * Sugarscape2.gaml: explicar
+  * Sugarscape3.gaml: explicar
 
 
 
 ---
 ## Mapa
-O arquivo de configuração da [grade](#grid) utilizado na simulação é derivado da simulação SugarScape do NetLogo. Inicialmente, este arquivo estava no formato **.asc** e foi posteriormente modificado para o formato **.csv**. A principal diferença entre esses dois formatos reside na forma como os valores são separados: enquanto o .asc utiliza espaçamento, o .csv utiliza ponto e vírgula. Essa distinção pode ser observada nas imagens abaixo, sendo a primeira representando o modelo .asc e a segunda o modelo .csv:
+O arquivo de configuração da [grade](#grid) utilizado na simulação é derivado da simulação SugarScape do NetLogo. Inicialmente, este arquivo estava no formato [**.asc**](https://en.wikipedia.org/wiki/Esri_grid) e foi posteriormente modificado para o formato **.csv**. A principal diferença entre esses dois formatos reside na forma como os valores são separados: enquanto o .asc utiliza espaçamento, o .csv utiliza ponto e vírgula. Essa distinção pode ser observada na Figura 1 abaixo, sendo a imagem da esquerda representando o modelo .asc e a direita o modelo .csv:
+//todo explicar que a conversão foi necessária porque o GAMA não suporta ASC.
 
 <img src= "Imagens/Mapa ASV.png"> <img src= "Imagens/Mapa CSV.png">
+>Figura 1: explicar a figura (lado direito e esquerdo)
 
-Assim como no NetLogo, a simulação utiliza um sistema de grade para representar a distribuição de açúcar no espaço no qual os agentes se movimentam. Essa simulação em Gama mantém a configuração original do livro, com uma grade de 50 células de altura e 50 células de largura, totalizando 2500 células e distribuindo-se em dois montes de açúcar.
+Assim como no NetLogo, a simulação utiliza um sistema de grade para representar a distribuição de açúcar no espaço no qual os agentes se movimentam. Essa simulação em Gama mantém a configuração original do livro, com uma grade de 50 células de altura e 50 células de largura, totalizando 2500 células e distribuindo-se em dois montes de açúcar. //todo tirar a mençaõ dos montes daqui, pois isso já é explicado depois
 
 ## Açúcar
+// todo não precisa usar aspas no açúcar/formigas
 Na presente simulação, ocorre uma distribuição simples de "açúcar" no mapa, constituindo um recurso essencial para a sobrevivência das "Formigas". No sistema cartesiano mencionado anteriormente, cada coordenada possui uma quantidade específica de açúcar e uma capacidade máxima para armazenamento desse recurso. Em outras palavras, alguns locais apresentam uma grande disponibilidade de açúcar, enquanto outros estão desprovidos desse recurso.
 
 <img src= "Imagens/Mapa picos.jpg">
+//todo legenda da figura e menção no texto
+//todo fernando parou a revisao aqui
 
 O mapa exibe dois picos de açúcar, localizados nos quadrantes 1 e 3. Na região de maior concentração desses picos, as células possuem a máxima capacidade de açúcar (4). Essa capacidade diminui à medida que se afasta desses quadrantes, podendo atingir valores nulos, como observado nos quadrantes 2 e 4 do plano cartesiano.
 
