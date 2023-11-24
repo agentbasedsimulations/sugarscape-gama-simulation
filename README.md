@@ -20,7 +20,7 @@ A simulação explicada é uma adaptação para a plataforma [GAMA](https://gama
 # Sumário
 * [Especificação da Simulação](#especificação-da-simulação)
   * [Mapa](#mapa)
-  * [Açucar](#açúcar) //todo revisar acentuações
+  * [Açúcar](#açúcar) 
   * [Formigas](#formigas)
 * [Implementação da Simulação](#código)
   * [Grid](#grid)
@@ -34,31 +34,33 @@ A simulação explicada é uma adaptação para a plataforma [GAMA](https://gama
 
 ---
 ## Mapa
-O arquivo de configuração da [grade](#grid) utilizado na simulação é derivado da simulação SugarScape do NetLogo. Inicialmente, este arquivo estava no formato [**.asc**](https://en.wikipedia.org/wiki/Esri_grid) e foi posteriormente modificado para o formato **.csv**. A principal diferença entre esses dois formatos reside na forma como os valores são separados: enquanto o .asc utiliza espaçamento, o .csv utiliza ponto e vírgula. Essa distinção pode ser observada na Figura 1 abaixo, sendo a imagem da esquerda representando o modelo .asc e a direita o modelo .csv:
-//todo explicar que a conversão foi necessária porque o GAMA não suporta ASC.
+O arquivo de configuração da [grade](#grid) utilizado na simulação é derivado da simulação SugarScape do NetLogo. Inicialmente, este arquivo estava no formato [**.asc**](https://en.wikipedia.org/wiki/Esri_grid) e foi posteriormente modificado para o formato **.csv**, único tipo de arquivo possível para descrever uma matriz na linguagem GAMA. A principal diferença entre esses dois formatos reside na forma como os valores são separados: enquanto o .asc utiliza espaçamento, o .csv utiliza ponto e vírgula. 
 
-<img src= "Imagens/Mapa ASV.png"> <img src= "Imagens/Mapa CSV.png">
->Figura 1: explicar a figura (lado direito e esquerdo)
+<img src= "Imagens/Mapa ASV.png"> 
 
-Assim como no NetLogo, a simulação utiliza um sistema de grade para representar a distribuição de açúcar no espaço no qual os agentes se movimentam. Essa simulação em Gama mantém a configuração original do livro, com uma grade de 50 células de altura e 50 células de largura, totalizando 2500 células e distribuindo-se em dois montes de açúcar. //todo tirar a mençaõ dos montes daqui, pois isso já é explicado depois
+>Figura 1: Ilustra o mapa no modelo .asc 
+
+<img src= "Imagens/Mapa CSV.png">
+
+>Figura 2: Ilustra o mapa no modelo . csv
+
+Assim como no NetLogo, a simulação utiliza um sistema de grade para representar a distribuição de açúcar no espaço no qual os agentes se movimentam. Essa simulação em Gama mantém a configuração original do livro, com uma grade de 50 células de altura e 50 células de largura, totalizando 2500 células.
 
 ## Açúcar
-// todo não precisa usar aspas no açúcar/formigas
-Na presente simulação ocorre uma distribuição simples de "açúcar" no mapa, constituindo um recurso essencial para a sobrevivência das "Formigas". No sistema cartesiano mencionado anteriormente, cada coordenada possui uma quantidade específica de açúcar e uma capacidade máxima para armazenamento desse recurso. Em outras palavras, alguns locais apresentam uma grande disponibilidade de açúcar, enquanto outros estão desprovidos desse recurso.
+
+Na presente simulação ocorre uma distribuição simples de açúcar no mapa, constituindo um recurso essencial para a sobrevivência das "Formigas". No sistema cartesiano mencionado anteriormente, cada coordenada possui uma quantidade específica de açúcar e uma capacidade máxima para armazenamento desse recurso. Em outras palavras, alguns locais apresentam uma grande disponibilidade de açúcar, enquanto outros estão desprovidos desse recurso.
 
 <img src= "Imagens/mapa-picos.png">
->Figura 1: //todo colocar uma legenda na figura
-// essa figura foi vc que fez? senão teria que citar a fonte dela
+>Figura 1: Essa imagem é uma representação do da distribuição de açúcar pelos quadrantes do mapa. Autoria: Aline Rodrigues Santos
 
 
 O mapa exibe dois picos de açúcar, localizados nos quadrantes 1 e 3. Na região de maior concentração de açúcar desses picos, as células possuem a máxima capacidade de açúcar (4 unidades). Essa capacidade diminui à medida que se afasta desses quadrantes, podendo atingir valores nulos, como observado nos quadrantes 2 e 4 do plano cartesiano. Estes valores podem ser verificados abrindo o arquivo CSV do mapa em um editor de texto.
 
-Essa estratégica distribuição de açúcar cria um ambiente heterogêneo, desafiando as formigas a procurar recursos em locais mais abundantes e a se adaptarem à disponibilidade de açúcar em sua vizinhança. O comportamento resultante das formigas, ao interagirem com esses gradientes de açúcar, contribui para a dinâmica da simulação. //tirei o 'fascinante' para evitar um adjetivo que representaria uma opinião particular nossa; em um artigo científico, os adjetivos idealmente devem ser comprovados com dados/experimentos ;-)
+Essa estratégica distribuição de açúcar cria um ambiente heterogêneo, desafiando as formigas a procurar recursos em locais mais abundantes e a se adaptarem à disponibilidade de açúcar em sua vizinhança. O comportamento resultante das formigas, ao interagirem com esses gradientes de açúcar, contribui para a dinâmica da simulação. 
 
 ## Formigas
-A simulação tem início com uma **população inicial de 400 formigas**, que emergem aleatoriamente em diversas células do mapa, independentemente de tais células estarem repletas de açúcar ou carentes desse recurso vital. **Cada formiga é singular**, caracterizada por "atributos genéticos" determinados aleatoriamente durante sua criação, sendo que outras características, como a quantidade de energia, variam ao longo da simulação.
+A simulação tem início com uma **população inicial de 400 formigas**, que emergem aleatoriamente em diversas células do mapa, independentemente de tais células estarem repletas de açúcar ou carentes desse recurso vital. **Cada formiga é singular**, caracterizada por "atributos genéticos", qualidade da visão e do metabolismo, determinados aleatoriamente durante sua criação, o acumulo de energia varia ao longo da simulação.
 
-//todo talvez aqui fosse legal colocar e explicar uma lista com os atributos das formigas.
 
 A posição de uma formiga é uma variável dinâmica, alterando-se como um par ordenado (X;Y) a cada ciclo. É fundamental ressaltar que dois agentes **não podem coexistir na mesma célula simultaneamente**.
 
@@ -73,7 +75,7 @@ Para se movimentar pelo ambiente e se alimentar, as formigas adotam o seguinte a
 3. Caso não haja uma célula com maior quantidade de açúcar do que a célula atual, então permanece na célula atual.
 4. Coletar todo o açúcar da célula para onde se moveu.
 
-// fernando parou a revisão aqui
+//Fernando parou a revisão aqui
 
 ---
 
@@ -262,6 +264,17 @@ experiment simulation type: gui {
 	}
 
 ```
+
+# Versões implementadas
+ ##  Crescimento Imediato (Immediate Growback)
+Na primeira abordagem, denominada "Immediate Growback", o açúcar cresce instantaneamente sempre que uma formiga o consome. Essa dinâmica visual resulta em períodos de inatividade das formigas, uma vez que ao não ter variação da distribuição do açúcar a melhor opção permanece a mesma. Além disso, três gráficos são apresentados, destacando a variação na população ao longo da simulação, a média de metabolismo e visão das formigas sobreviventes. Ao analisar estes gráficos, em comparação com outras versões, observamos uma seleção menos rigorosa, permitindo a sobrevivência de agentes com características menos favoráveis, como visão reduzida e metabolismo elevado. 
+
+## Crescimento Constante (Constant Growback)
+Na segunda versão, conhecida como "Constant Growback", introduzimos uma dinâmica distinta. O açúcar agora cresce de maneira constante a cada ciclo, o que significa que, após a alimentação de uma formiga, leva algum tempo para que a quantidade inicial de açúcar na célula se restabeleça. Essa dinâmica promove uma competição contínua entre as formigas, todas buscando as células mais ricas em açúcar. Nesta simulação, mantivemos os três gráficos da versão anterior. Ao analisar esses gráficos em comparação com a primeira versão, observa-se uma seleção mais rigorosa, permitindo a sobrevivência apenas das formigas com as melhores características, como alta visão e baixo metabolismo.
+
+
+
+
 
 
 
