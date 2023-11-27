@@ -34,56 +34,55 @@ A simulação explicada é uma adaptação para a plataforma [GAMA](https://gama
 
 ---
 ## Mapa
-O arquivo de configuração da [grade](#grid) utilizado na simulação é derivado da simulação SugarScape do NetLogo. Inicialmente, este arquivo estava no formato [**.asc**](https://en.wikipedia.org/wiki/Esri_grid) e foi posteriormente modificado para o formato **.csv**, único tipo de arquivo possível para descrever uma matriz na linguagem GAMA. A principal diferença entre esses dois formatos reside na forma como os valores são separados: enquanto o .asc utiliza espaçamento, o .csv utiliza ponto e vírgula. 
+O arquivo de configuração da [grade](#grid) utilizado na simulação é derivado da simulação SugarScape do NetLogo. Inicialmente, este arquivo estava no formato [**.asc**](https://en.wikipedia.org/wiki/Esri_grid) e foi posteriormente modificado para o formato **.csv**, único tipo de arquivo possível para descrever uma matriz na linguagem GAMA. A principal diferença entre esses dois formatos reside na forma como os valores são separados: enquanto o .asc utiliza espaçamento, o .csv utiliza ponto e vírgula. A Figura 1 apresenta o mapa nos formatos .asc (esquerda) e .csv.
 
-<img src= "Imagens/Mapa ASV.png"> 
+<img src= "Imagens/Mapa ASV.png"><img src= "Imagens/Mapa CSV.png">
 
->Figura 1: Ilustra o mapa no modelo .asc 
+>Figura 1: Mapas no formato .asc (esquerda) e .csv (direita).
 
-<img src= "Imagens/Mapa CSV.png">
 
->Figura 2: Ilustra o mapa no modelo . csv
-
-Assim como no NetLogo, a simulação utiliza um sistema de grade para representar a distribuição de açúcar no espaço no qual os agentes se movimentam. Essa simulação em Gama mantém a configuração original do livro, com uma grade de 50 células de altura e 50 células de largura, totalizando 2500 células.
+Assim como no NetLogo, a simulação utiliza um sistema de grade para representar a distribuição de açúcar no espaço no qual os agentes se movimentam. Essa simulação em GAMA mantém a configuração original do livro, com uma grade de 50 células de altura e 50 células de largura, totalizando 2500 células.
 
 ## Açúcar
+Na presente simulação ocorre uma distribuição simples de açúcar no mapa, constituindo um recurso essencial para a sobrevivência das formigas. No sistema cartesiano mencionado anteriormente, cada coordenada possui uma quantidade específica de açúcar e uma capacidade máxima para armazenamento desse recurso. Em outras palavras, alguns locais apresentam uma grande disponibilidade de açúcar, enquanto outros estão desprovidos desse recurso.
 
-Na presente simulação ocorre uma distribuição simples de açúcar no mapa, constituindo um recurso essencial para a sobrevivência das "Formigas". No sistema cartesiano mencionado anteriormente, cada coordenada possui uma quantidade específica de açúcar e uma capacidade máxima para armazenamento desse recurso. Em outras palavras, alguns locais apresentam uma grande disponibilidade de açúcar, enquanto outros estão desprovidos desse recurso.
+O mapa, apresentado na Figura 2, exibe dois picos de açúcar, localizados nos quadrantes 1 e 3. Na região de maior concentração de açúcar desses picos, as células possuem a máxima capacidade de açúcar (4 unidades). Essa capacidade diminui à medida que se afasta desses quadrantes, podendo atingir valores nulos, como observado nos quadrantes 2 e 4 do plano cartesiano. Estes valores podem ser verificados abrindo o arquivo CSV do mapa em um editor de texto.
 
 <img src= "Imagens/mapa-picos.png">
->Figura 1: Essa imagem é uma representação do da distribuição de açúcar pelos quadrantes do mapa. Autoria: Aline Rodrigues Santos
-
-
-O mapa exibe dois picos de açúcar, localizados nos quadrantes 1 e 3. Na região de maior concentração de açúcar desses picos, as células possuem a máxima capacidade de açúcar (4 unidades). Essa capacidade diminui à medida que se afasta desses quadrantes, podendo atingir valores nulos, como observado nos quadrantes 2 e 4 do plano cartesiano. Estes valores podem ser verificados abrindo o arquivo CSV do mapa em um editor de texto.
+>Figura 1: Distribuição de açúcar pelos quadrantes do mapa. Autoria: Aline Rodrigues Santos
 
 Essa estratégica distribuição de açúcar cria um ambiente heterogêneo, desafiando as formigas a procurar recursos em locais mais abundantes e a se adaptarem à disponibilidade de açúcar em sua vizinhança. O comportamento resultante das formigas, ao interagirem com esses gradientes de açúcar, contribui para a dinâmica da simulação. 
 
 ## Formigas
-A simulação tem início com uma **população inicial de 400 formigas**, que emergem aleatoriamente em diversas células do mapa, independentemente de tais células estarem repletas de açúcar ou carentes desse recurso vital. **Cada formiga é singular**, caracterizada por "atributos genéticos", qualidade da visão e do metabolismo, determinados aleatoriamente durante sua criação, o acumulo de energia varia ao longo da simulação.
+A simulação tem início com uma **população inicial de 400 formigas**, que emergem aleatoriamente em diversas células do mapa, independentemente de tais células estarem repletas de açúcar ou carentes desse recurso vital. **Cada formiga é singular**, caracterizada por "atributos genéticos" de visão, metabolismo, e energia disponível.
 
+A posição de uma formiga é uma variável dinâmica, alterando-se como um par ordenado (X;Y) a cada _ciclo_ da simulação. É fundamental ressaltar que dois agentes **não podem coexistir na mesma célula simultaneamente**.
 
-A posição de uma formiga é uma variável dinâmica, alterando-se como um par ordenado (X;Y) a cada ciclo. É fundamental ressaltar que dois agentes **não podem coexistir na mesma célula simultaneamente**.
+Com o propósito de **introduzir heterogeneidade na população e investigar a seleção natural**, mesmo sem a existência de um processo reprodutivo, são realizadas escolhas aleatórias para os níveis de visão e metabolismo de cada formiga. O metabolismo, que reflete a quantidade de açúcar gasta a cada _ciclo_ da simulação (em atividades como movimentação e alimentação), varia de 1 a 4 e é definido aleatoriamente no início da simulação. Caso a quantidade de açúcar obtida seja inferior ao metabolismo, a formiga sucumbe; caso contrário, ela persiste indefinidamente.
 
-Com o propósito de **introduzir heterogeneidade na população e investigar a seleção natural**, mesmo sem a existência de um processo reprodutivo, são realizadas escolhas aleatórias para os níveis de visão e metabolismo de cada formiga. O metabolismo, que reflete a quantidade de açúcar gasta a cada _step_ da simulação (em atividades como movimentação e alimentação), varia de 1 a 4 e é definido aleatoriamente no início da simulação. Caso a quantidade de açúcar obtida seja inferior ao metabolismo, a formiga sucumbe; caso contrário, ela persiste indefinidamente.
+Quanto à visão de cada formiga, seu valor é definido aleatoriamente entre 1 a 6 células. A visão da formiga é portanto apenas de células horizontais/verticais adjacentes à sua posição.
 
-Quanto à visão de cada formiga, seu valor é definido aleatoriamente entre 1 a 6 células. A visão da formiga é apenas de células horizontais/verticais à sua posição, portanto.
-
-Para se movimentar pelo ambiente e se alimentar, as formigas adotam o seguinte algoritmo: 
+Para se movimentar pelo ambiente e se alimentar, as formigas adotam o seguinte algoritmo a cada _ciclo_ da simulação: 
 
 1. Identificar, dentro do seu raio de visão máximo, qual é a célula com a maior quantidade de açúcar.
 2. Se identificar duas ou mais células com a mesma quantidade máxima, movimentar-se para a célula mais próxim.
 3. Caso não haja uma célula com maior quantidade de açúcar do que a célula atual, então permanece na célula atual.
 4. Coletar todo o açúcar da célula para onde se moveu.
 
-//Fernando parou a revisão aqui
-
 ---
 
-# Código
-**O código** da simulação Sugar Scape é composto por quatro elementos essenciais: a [species global](#espécie-global), a [species ant](#espécie-formiga) (que representa as formigas), a [species do tipo grid](#grid) e, por fim, o [experiment](#experiment), onde estão definidos os gráficos e os parâmetros. Vamos explorar a seguir detalhadamente cada uma dessas partes fundamentais.
+# Implementação em GAMA
+O **código** da implementação GAMA da simulação SugarScape é composto por quatro elementos essenciais: a seção [global](#espécie-global), a [species ant](#espécie-formiga) (que representa as formigas), a [species grid](#grid) e, por fim, o [experiment](#experiment), onde estão definidos os gráficos e os parâmetros da simulação. Vamos explorar a seguir detalhadamente cada uma dessas partes fundamentais.
 
-## Espécie Global
-**A Espécie Global** desempenha um papel essencial na definição de atributos, ações e comportamentos compartilhados entre experimentos ou múltiplos agentes na simulação. Neste contexto, são estabelecidas as características globais das [formigas](#formigas).
+//todo no paragrafo acima estava 'species do tipo grid' eu deixei apenas 'species grid'; estaria correto?
+
+## Seção Global
+A seção **global** desempenha um papel essencial na definição de atributos, ações e comportamentos compartilhados entre experimentos ou múltiplos agentes na simulação. Na simulação SugarScape são implementadas variáveis globais para especificar as características gerais das [formigas](#formigas). O trecho de código a seguir apresenta as variáveis globais definidas:
+
+//todo será que não seria mais interessante mostrar todo o código de uma só vez e então ir explicando as partes?
+
+//Fernando parou a revisão aqui
+
 ``` 
 global {
 	int vision <- 6;
@@ -275,7 +274,8 @@ Na segunda versão, conhecida como "Constant Growback", introduzimos uma dinâmi
 
 
 
-
+# Lições Aprendidas
+// todo explicar aqui quais foram as lições aprendidas ao desenvolver essa simulação em GAMA e que seriam importantes de se passar para um principiante em GAMA. 
 
 
 
