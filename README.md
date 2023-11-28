@@ -134,8 +134,13 @@ global {
 	}
 ```
 
-## Espécie Formiga
-**Na Espécie Formiga**, definem-se os atributos exclusivos de cada agente, com valores selecionados aleatoriamente dentro de intervalos específicos. Esses intervalos são determinados pelos valores máximos e mínimos definidos na [espécie global](#espécie-global). 
+## Espécie Ant
+Na **espécie ant** define a estrutura e comportamentos do agente formiga. A estrutura é definida pelos atributos da formiga, cujos valores são selecionados aleatoriamente dentro de intervalos específicos. Esses intervalos são determinados pelos valores máximos e mínimos definidos na [espécie global](#espécie-global). 
+
+// fernando parou aqui
+
+// todo aline: colocar o codigo da formiga em um bloco único
+
  ```
  species ant {
  int vision_ant min: 1 <- rnd(vision);
