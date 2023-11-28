@@ -49,7 +49,8 @@ Na presente simulação ocorre uma distribuição simples de açúcar no mapa, c
 O mapa, apresentado na Figura 2, exibe dois picos de açúcar, localizados nos quadrantes 1 e 3. Na região de maior concentração de açúcar desses picos, as células possuem a máxima capacidade de açúcar (4 unidades). Essa capacidade diminui à medida que se afasta desses quadrantes, podendo atingir valores nulos, como observado nos quadrantes 2 e 4 do plano cartesiano. Estes valores podem ser verificados abrindo o arquivo CSV do mapa em um editor de texto.
 
 <img src= "Imagens/mapa-picos.png">
->Figura 1: Distribuição de açúcar pelos quadrantes do mapa. Autoria: Aline Rodrigues Santos
+
+>Figura 2: Distribuição de açúcar pelos quadrantes do mapa. Autoria: Aline Rodrigues Santos
 
 Essa estratégica distribuição de açúcar cria um ambiente heterogêneo, desafiando as formigas a procurar recursos em locais mais abundantes e a se adaptarem à disponibilidade de açúcar em sua vizinhança. O comportamento resultante das formigas, ao interagirem com esses gradientes de açúcar, contribui para a dinâmica da simulação. 
 
@@ -72,18 +73,17 @@ Para se movimentar pelo ambiente e se alimentar, as formigas adotam o seguinte a
 ---
 
 # Implementação em GAMA
-O **código** da implementação GAMA da simulação SugarScape é composto por quatro elementos essenciais: a seção [global](#espécie-global), a [species ant](#espécie-formiga) (que representa as formigas), a [species grid](#grid) e, por fim, o [experiment](#experiment), onde estão definidos os gráficos e os parâmetros da simulação. Vamos explorar a seguir detalhadamente cada uma dessas partes fundamentais.
+O **código** da implementação GAMA da simulação SugarScape é composto por quatro elementos essenciais: a [espécie global](#espécie-global), a [espécie ant](#espécie-formiga) (que representa as formigas), a [espécie grid](#grid) e, por fim, o [experiment](#experiment), onde estão definidos os gráficos e os parâmetros da simulação. Vamos explorar a seguir detalhadamente cada uma dessas partes fundamentais.
 
-//todo no paragrafo acima estava 'species do tipo grid' eu deixei apenas 'species grid'; estaria correto?
+## Espécie Global
+A espécie  **global** desempenha um papel essencial na definição de atributos, ações e comportamentos compartilhados entre experimentos ou múltiplos agentes na simulação. A Figura 3 apresenta a implementação da espécie global.  No trecho de código `species global` são implementadas variáveis globais para especificar as características gerais das [formigas](#formigas) na simulação SugarScape.
 
-## Seção Global
-A seção **global** desempenha um papel essencial na definição de atributos, ações e comportamentos compartilhados entre experimentos ou múltiplos agentes na simulação. Na simulação SugarScape são implementadas variáveis globais para especificar as características gerais das [formigas](#formigas). O trecho de código a seguir apresenta as variáveis globais definidas:
+No trecho de código `características do mapa` é implementada a leitura e inicialização do mapa. A partir do arquivo CSV é gerada a matriz que será empregada na grade do [mapa](#mapa), e as cores são atribuídas com base nos valores do mapa.
 
-//todo será que não seria mais interessante mostrar todo o código de uma só vez e então ir explicando as partes?
-
-//Fernando parou a revisão aqui
+Por fim, no trecho de código `métodos utilitários` são implementados métodos para extrair métricas da simulação. Os métodos `calculate_average_vision` e `calculate_average_metabolism` calculam e retornam, respectivamente, os valores médios de visão e metabolismo de todas as formigas presentes na simulação. Estes métodos são utilizados para elaborar gráficos da simulação, conforme explicado posteriormente na seção de [experimentação](#experiment).
 
 ``` 
+// species global
 global {
 	int vision <- 6;
 	int nb_initial_ant <- 400;
@@ -92,12 +92,9 @@ global {
 	int nb_ant -> {length(ant)};
 	float average_vision <- 6.0 update: calculate_average_vision();
 	float average_metabolism <- 5.0 update: calculate_average_metabolism();   
-  ```
 
-Na segunda etapa da definição global, configuram-se as **características do mapa**. Utilizando um arquivo .csv, é gerada a matriz que será empregada no grid do [mapa](#mapa), e as cores são atribuídas com base nos valores do mapa.
-
-```
-csv_file arquivo <- csv_file("../includes/map.csv");
+	// características do mapa
+	csv_file arquivo <- csv_file("../includes/map.csv");
 
 	init {
 		create ant number: nb_initial_ant;
@@ -106,38 +103,33 @@ csv_file arquivo <- csv_file("../includes/map.csv");
 			grid_value <- float(data[grid_x, grid_y]);
 			sugar <- grid_value;
 			if (sugar = 1) {
-			color <- rgb(250, 250, 210);
-		} else if (sugar = 2) {
-			color <- rgb(247, 246, 167);
-		} else if (sugar = 3) {
-			color <- rgb(243, 242, 126);
-		} else if (sugar = 4) {
-			color <- rgb(240, 241, 50);
-		} else if (sugar = 0) {
-			color <- rgb(254, 254, 251);
-		}
+				color <- rgb(250, 250, 210);
+			} else if (sugar = 2) {
+				color <- rgb(247, 246, 167);
+			} else if (sugar = 3) {
+				color <- rgb(243, 242, 126);
+			} else if (sugar = 4) {
+				color <- rgb(240, 241, 50);
+			} else if (sugar = 0) {
+				color <- rgb(254, 254, 251);
+			}
 		}
 	}
 
-```
-
-Por fim, na última etapa global, são realizados **cálculos essenciais** para o controle da simulação. Os valores médios de visão e metabolismo de todas as formigas presentes são calculados e serão apresentados em forma de gráficos na fase de [experimentação](#experiment).
-```
-float calculate_average_vision {	
+	// métodos utilitários
+	float calculate_average_vision {	
 		float totalVision <- 0.0;
-ask ant {
+		ask ant {
 			totalVision <- totalVision + vision_ant;
 		}
-
 		return totalVision / nb_ant;
 	}
 
 	float calculate_average_metabolism {
 		float totalmetabolism <- 0.0;
-		ask ant {
-			totalmetabolism <- totalmetabolism + matabolism_ant;
-		}
-
+			ask ant {
+				totalmetabolism <- totalmetabolism + matabolism_ant;
+			}
 		return totalmetabolism / nb_ant;
 	}
 ```
