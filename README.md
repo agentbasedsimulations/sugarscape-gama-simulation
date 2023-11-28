@@ -2,7 +2,7 @@
 <img src= "Imagens/Marca Alto Vale Horizontal Assinatura CMYK-01.jpg">
 
 ---
- //todo GAMA em maiusculo em todas as ocorrencias
+
 
 # Tutorial: Simulação SugarScape na Plataforma GAMA
 O objetivo deste tutorial de [simulação com agentes](https://sites.google.com/view/simulacoescomagentes/) é estudar a linguagem GAMA e algumas das suas diversas aplicações. A simulação a seguir considera o modelo SugarScape, desenvolvido por Joshua M. Epstein e Robert Axell em 1996, citado no capítulo 2 do livro "Growing Artificial Societies: Social Science from the Bottom Up". Esse modelo considera uma população de formigas, que se movimentam pelo ambiente em busca de alimento (açúcar) para se manterem vivas. O alimento pode reaparecer com o passar do tempo.
