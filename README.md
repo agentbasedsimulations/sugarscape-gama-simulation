@@ -3,7 +3,6 @@
 
 ---
 
-
 # Tutorial: Simulação SugarScape na Plataforma GAMA
 O objetivo deste tutorial de [simulação com agentes](https://sites.google.com/view/simulacoescomagentes/) é estudar a linguagem GAMA e algumas das suas diversas aplicações. A simulação a seguir considera o modelo SugarScape, desenvolvido por Joshua M. Epstein e Robert Axell em 1996, citado no capítulo 2 do livro "Growing Artificial Societies: Social Science from the Bottom Up". Esse modelo considera uma população de formigas, que se movimentam pelo ambiente em busca de alimento (açúcar) para se manterem vivas. O alimento pode reaparecer com o passar do tempo.
 
@@ -25,10 +24,10 @@ A simulação explicada é uma adaptação para a plataforma [GAMA](https://gama
 * [Implementação da Simulação](#código)
   * [Grid](#grid)
   * [Experiment](#experiment)
-* Versões implementadas
-  * Sugarscape1.gaml: explicar
-  * Sugarscape2.gaml: explicar
-  * Sugarscape3.gaml: explicar
+* [implementações em gama](#implementação-em-gama)
+  * [Crescimento Imediato](#crescimento-imediato-immediate-growback)
+  * [Crescimento Constante](#crescimento-constante-constant-growback)
+  * [Gráfico]()
 
 
 
@@ -50,7 +49,8 @@ O mapa, apresentado na Figura 2, exibe dois picos de açúcar, localizados nos q
 
 <img src= "Imagens/mapa-picos.png">
 
->Figura 2: Distribuição de açúcar pelos quadrantes do mapa. Autoria: Aline Rodrigues Santos
+>Figura 2: Distribuição de açúcar pelos quadrantes do mapa. <br>
+ Autoria: Aline Rodrigues Santos
 
 Essa estratégica distribuição de açúcar cria um ambiente heterogêneo, desafiando as formigas a procurar recursos em locais mais abundantes e a se adaptarem à disponibilidade de açúcar em sua vizinhança. O comportamento resultante das formigas, ao interagirem com esses gradientes de açúcar, contribui para a dinâmica da simulação. 
 
@@ -130,36 +130,41 @@ global {
 			ask ant {
 				totalmetabolism <- totalmetabolism + matabolism_ant;
 			}
-		return totalmetabolism / nb_ant;
+M		return totalmetabolism / nb_ant;
 	}
 ```
 
-## Espécie Ant
-Na **espécie ant** define a estrutura e comportamentos do agente formiga. A estrutura é definida pelos atributos da formiga, cujos valores são selecionados aleatoriamente dentro de intervalos específicos. Esses intervalos são determinados pelos valores máximos e mínimos definidos na [espécie global](#espécie-global). 
+## Espécie Formiga
+**Na Espécie Formiga**, na parte de definição dos atributos estipula-se as caracteristicas exclusivas de cada agente, com valores selecionados aleatoriamente dentro de intervalos específicos. Esses intervalos são determinados pelos valores máximos e mínimos definidos na [espécie global](#espécie-global). 
+ 
+ A seguir, durante a parte de movimentação dos agente, estabelece que cada formiga inicia em uma célula aleatória do grid e se move dependendo da quantidade de açúcar e da disponibilidade das células vizinhas, essa movimentação será definida seguindo os padrões de movimentação de Von Neumann, exemplificado na imagem 3. Dessa forma, cada formiga pode enxergar as células dentro do seu limite de visão. Se houver células com mais açúcar e sem outras formigas, a formiga se moverá para a célula mais próxima.
 
-// fernando parou aqui
+É lícito citar que as limitações atuais do Gama exigiram o uso do comando "using topology(cell)", que busca as células vizinhas na configuração do grid, uma vez que ele é incapaz de realizar essa configuração automaticamente.
 
-// todo aline: colocar o codigo da formiga em um bloco único
+ Por fim, ao chegar no final do código da espécie, são definidos dois aspectos. O primeiro aspecto trata da aparência física da formiga, incluindo os atributos mencionados acima. O segundo aspecto determina em quais circunstâncias a formiga deixará de existir.
 
- ```
- species ant {
- int vision_ant min: 1 <- rnd(vision);
-	int matabolism_ant min: 1<- rnd(metabolism);
-	int inicial_energy min: 5<- rnd(max_energy);
- ```
- A seguir, é desenvolvida a movimentação do agente, seguindo o padrão (4) de Von Neumann, conforme ilustrado na imagem abaixo:
 
  <img src= "Imagens/Von Neuman moviment.png">
  
- O código abaixo indica que cada formiga inicia em uma célula aleatória do grid e se move dependendo da quantidade de açúcar e da disponibilidade das células vizinhas. A formiga pode enxergar as células dentro de sua visão limite. Se houver células com mais açúcar e sem outras formigas, a formiga se moverá para a célula mais próxima.
-
-As limitações atuais do Gama exigiram o uso do comando "using topology(cell)", que busca as células vizinhas na configuração do grid, ou seja, de Von Neumann.
+ > imagem 3: Demonstração movimentação de Von Neuman (LEITE et al., 2002).
+ 
+ 
 
  ```
- cell my_cell <- one_of(cell);
-	init {
-		location <- my_cell.location;
+ // Definição de atributos.
+ species ant {
+	int vision_ant min: 1 <- rnd(vision);
+	int matabolism_ant min: 1<- rnd(metabolism);
+	int inicial_energy min: 5<- rnd(max_energy);
+	int energy min: 0 <- inicial_energy update: energy - matabolism_ant + my_cell.sugar ;
+
+// Movimentação dos agentes
+    cell my_cell <- one_of(cell);
+	 
+	 reflex basic_move {
+   	    my_cell.sugar <- 0;
 		my_cell <- choose_cell();
+		location <- my_cell.location;
 	}
 	
 	cell choose_cell {
@@ -171,20 +176,22 @@ As limitações atuais do Gama exigiram o uso do comando "using topology(cell)",
 			return cell_with_max_sugar;
 		}
 	}
- ```
-
- Por fim, são definidos dois aspectos nesta espécie. O primeiro aspecto trata da aparência física da formiga, incluindo os atributos mencionados acima. O segundo aspecto determina em quais circunstâncias a formiga deixará de existir.
-
- ```
-    aspect default {
+// Aparência
+	aspect default {
 		draw circle(1.0) color: #darkred;
 		//draw string (energy with_precision 1 ) size: 3 color: #black;
 	}
-
+// Final da vida
 	reflex end_of_life when: (energy <= 0) {
 		do die;
 	}
+
+}
  ```
+
+
+
+ 
  
 ## Grid
 **O Grid** desempenha um papel essencial nesta simulação, sendo responsável por definir as características do mapa. Em geral, ele é automaticamente gerado em todas as simulações, mas quando desejamos personalizar o mapa, é necessário criar este agente para especificar as propriedades desejadas. 
