@@ -7,34 +7,32 @@
 model sugarscape1
 
 global {
-		
-	
-	int vision <- 6;
+	float crescimentoAcucar <- 1.0;
+	float valorMaximoAcucar;
+	int visao <- 6;
 	int nb_initial_ant <- 400;
-	int metabolism <-4;
-	int max_sugar <- 25;
-	int nb_ant -> {length(ant)};
-	float average_vision <- 6.0 update: calculate_average_vision();
-	float average_metabolism <- 5.0 update: calculate_average_metabolism();
-	int minDeathAge <- 60;
-	int maxDeathAge <- 100;
-	bool replace <- true;
+	float max_metabolism <- 5.0;
+	float max_energy <- 25.0;
 	
-	float calculate_average_vision {
-    float totalVision <- 0.0;
+	int quantidade_formiga -> {length(ant)};
+	float mediaVisao <- 6.0 update: calcularMediaVisao();
+	float mediaMetabolism <- 5.0 update: calcularMediaVisao();
+	
+	float calcularMediaVisao {
+    float totalVisao <- 0.0;
     ask ant {
-        totalVision <- totalVision + vision_ant;
+        totalVisao <- totalVisao + vision;
     }
-    return totalVision /nb_ant;
+    return totalVisao / quantidade_formiga;
 }
    
-   
-   float calculate_average_metabolism {
-    float totalmetabolism <- 0.0;
+   float calcularMediaMetabolismo {
+    float totalmetabolismo;
     ask ant {
-        totalmetabolism <- totalmetabolism + matabolism_ant;
+        totalmetabolismo <- totalmetabolismo + matabolism;
     }
-    return totalmetabolism / nb_ant;
+    return totalmetabolismo / quantidade_formiga;
+   
 }
 	
 	
@@ -46,8 +44,9 @@ global {
     	matrix data <- matrix(arquivo);
     	ask cell {
     		grid_value <- float(data[grid_x,grid_y]);
-    		max_psugar <- grid_value;
-    		pSugar <- grid_value;
+    		valorMaximoAcucar <- grid_value;
+    		sugar <- grid_value;
+    		//write data[grid_x,grid_y];
     	}
     	}
     	
@@ -56,80 +55,71 @@ global {
 
 species ant{
 	//cell espaco;
-	int vision_ant min:1  <-  rnd (vision);
+	int vision min:0 <- rnd(visao);
 	cell my_cell <- one_of(cell);
-	int matabolism_ant min: 1<- rnd(metabolism);
-	int inicial_energy min: 5<- rnd(max_sugar);
-	float sugar min: 0 <- inicial_energy update: sugar - matabolism_ant + my_cell.pSugar;
-	int maxAge  min: minDeathAge max: maxDeathAge <- rnd (maxDeathAge - minDeathAge) + minDeathAge;
-	int age max: maxAge <- 0 update: int(age + 1);
+	float matabolism min:0.0 <- rnd (max_metabolism);
+	float energy min:0.0 <- rnd (max_energy)   ;
 	
-	init{
-		location <- choose_cell().location;
-	}
 
+   reflex basic_move {
+   	    energy <- energy - matabolism + my_cell.sugar;
+   	    my_cell.sugar <- 0.0;
+		my_cell <- choose_cell();
+		location <- my_cell.location;
+	}
 	
 	cell choose_cell {
-		
-    list<cell> avaliable_cell <- my_cell.neighbours[vision_ant] where (empty(ant inside (each)));
-     cell cell_with_max_sugar <-    avaliable_cell with_max_of (each.pSugar);
-     
- 
-   if (my_cell = nil){
-    	return one_of(my_cell.neighbors);}
-   if (cell_with_max_sugar.pSugar < my_cell.pSugar or cell_with_max_sugar.pSugar = my_cell.pSugar) {
-			return my_cell;
-		} else {
-			return cell_with_max_sugar;}
+    list<cell> available_cells <- (my_cell.neighbours2) where (empty(ant inside (each)));
+    cell cell_with_max_sugar <- available_cells with_max_of (each.sugar);
     
-} 
- 
+    if (cell_with_max_sugar.sugar > my_cell.sugar){
+    	return cell_with_max_sugar;
+    } 
+    else if (cell_with_max_sugar.sugar = 0 and my_cell.sugar = 0  ) {
+    	return one_of(available_cells);
+    }
+    else if (cell_with_max_sugar.sugar <= my_cell.sugar){
+    	return my_cell;
+    } 
+}
 	
 	aspect default {
-		draw circle(1.0) color: #darkred;
-		draw string (sugar with_precision 1 ) size: 3 color: #black;
+		draw circle(0.5) color: #darkred;
+		draw string (matabolism with_precision 1 ) size: 3 color: #black;
 	}
 	
-	reflex end_of_life when: (sugar <= 0) or (age = maxAge)  {
-		if replace {
-			create ant ;
-		}
+	reflex end_of_life when: (energy <= 0)  {
 		do die;
 	}
 	
 }
 
 
-grid cell width: 50 height: 50 neighbors:4{
-	
-	float max_psugar;
-	float sugarGrowthRate <- 0.0;
-	float pSugar ;
+grid cell width: 50 height: 50{
+	int vision <- visao;
+	float valorMaximoAcucar;
+	float sugarGrowthRate <- crescimentoAcucar;
+	float sugar  update: sugar + sugarGrowthRate max: valorMaximoAcucar;
 	map<int,list<cell>> neighbours;
-	//list<cell> neighbours2 <- (self neighbors_at vision_ant );
+	list<cell> neighbours2 <- (self neighbors_at vision);
 	 
 	  reflex updateColor{
-    	if (pSugar = 1){
+    	if (sugar = 1){
     		color <- rgb(250,250,210) ;
     	}  else 
-		      if (pSugar = 2){
+		      if (sugar = 2){
 			  color <- rgb(247,246,167) ;
 		} else
-		      if (pSugar = 3){
+		      if (sugar = 3){
 			  color <- rgb(243,242,126) ;	  
 		} else
-		      if (pSugar = 4){
+		      if (sugar = 4){
 		      	color <- rgb(240,241,50 ) ; 
 		 }else
-		       if (pSugar = 0){
+		       if (sugar = 0){
 		      	color <- rgb(254,254,251);
 		      	} 	
     }
-    init {
-			loop i from: 1 to: vision {
-				neighbours[i] <- self neighbors_at i; 
-			}
-		}
 	 
  
   
@@ -139,37 +129,29 @@ grid cell width: 50 height: 50 neighbors:4{
 
 }
 
-experiment simulation type: gui {
-	parameter "Visão: " var: vision min: 1 max: 25 category: "Ant";
+experiment arte type: gui {
+	parameter "Visão: " var: visao min: 1 max: 25 category: "Ant";
 	parameter "Quantida formiga: " var: nb_initial_ant min: 1 max: 2500 category: "Ant";
-	parameter 'Replace dead agents ?' var: replace <- true category: 'Agents';
 	output{ 
 		display display_grid {
            grid cell;
            species ant aspect: default;	
            		
 	}
-	display "my_display"  {
-        chart "my_chart" type: histogram {
-        datalist (distribution_of(ant collect each.sugar, 30, ant min_of each.sugar,ant max_of each.sugar) at "legend") 
-            value:(distribution_of(ant collect each.sugar,20,0,200) at "values");      
-        }
-    }
 	display Population refresh: every(5#cycles)  type: 2d {
 			chart "Population" type: series size: {1,0.5} position: {0, 0} {
-				data "Quantidade de Formigas" value: nb_ant  color: #black;
+				data "Quantidade de Formigas" value: quantidade_formiga  color: #black;
 				
 				}}
 	
 	display Vision refresh: every(5#cycles)  type: 2d {
-			chart "Average Vision" type: series size: {1,0.5} position: {0, 0} {
-				data "Vision" value: average_vision  color: #black;
+			chart "Vision" type: series size: {1,0.5} position: {0, 0} {
+				data "Média visão" value: mediaVisao  color: #black;
 				}}
 				
 	display Metabolism refresh: every(5#cycles)  type: 2d {
-			chart "Average Metabolism" type: series size: {1,0.5} position: {0, 0} {
-				data "metabolism" value: average_metabolism   color: #black;
+			chart "Metabolism" type: series size: {1,0.5} position: {0, 0} {
+				data "Média metabolismo" value: mediaMetabolism  color: #black;
 				}}
-	monitor "Quantidade de formiga" value: nb_ant;}
+	monitor "Quantidade de formiga" value: quantidade_formiga;}
 }
-
